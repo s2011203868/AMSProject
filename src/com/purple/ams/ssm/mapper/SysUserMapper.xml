@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.purple.ams.ssm.mapper.SysUserMapper" >
+
+
+  <select id="findHasMacheineCode" parameterType="String" resultType="int">
+	select count(*) from sys_config where macheineCode = #{dESMac}
+  </select>
+
+  <insert id="saveMacheineCode" parameterType="String" >
+  	insert into sys_config (macheineCode) values (#{dESMac})
+  </insert>
+
+	
+  
+  <update id="EditUserStatus" parameterType="String">
+  	update sys_user set status = #{status} where userid = #{userid}
+  </update>
+  
+  <insert id="createSysUser">
+  	INSERT INTO sys_user (userid,account,PASSWORD,username,createtime,salt,STATUS,lastlogintime) VALUES 
+  	(#{userid},#{account},#{md5Password},#{username},#{nowTime},#{salt},#{status},#{nowTime})
+  </insert>
+  
+  <select id="checkAccount" resultType="int" parameterType="String">
+  	select count(*) from sys_user where account = #{account}
+  </select>
+  <update id="changePassword">
+  	update sys_user set password = #{changedPassword} where userid = #{userid}
+  </update>
+  <update id="setLastLoginTime" parameterType="String">
+  	update sys_user set lastlogintime = #{nowTime} where userid = #{userid}
+  </update>
+  
+  <select id="findByUserAccount" resultType="SysUser" parameterType="String" >
+    select * from sys_user where account = #{account} AND STATUS = 1
+  </select>
+  
+  <select id="finUserRolesByAccount" resultType="SysRole" parameterType="String">
+  	SELECT * FROM sys_role WHERE roleid IN (
+      
+      SELECT sys_role_id FROM sys_user_role WHERE sys_user_id = (SELECT userid FROM sys_user WHERE account = #{account})) AND STATUS =1
+  </select>
+  
+  <select id="findRoleCount" resultType="int">
+  	select count(*) from sys_role
+  </select>
+  
+  <delete id="deleteUserRoleByRoleid" parameterType="String">
+     DELETE FROM sys_user_role WHERE sys_role_id = #{roleid}
+  </delete>
+  
+  <select id="finAllRoles" resultType="SysRole">
+  	select * from sys_role
+  </select>
+  
+  <select id="finUserMenusByAccount" resultType="SysPermission" parameterType="String">
+	SELECT
+	*
+	FROM
+		sys_permission
+	WHERE status = 1 and pertype = 'topmenu'
+		AND id IN
+	(SELECT
+	sys_permission_id
+		FROM
+	sys_role_permission
+		WHERE sys_role_id IN
+	(SELECT
+		sys_role_id
+	FROM
+		sys_user_role
+	WHERE sys_user_id =
+		(SELECT
+		userid
+		FROM
+		sys_user
+	WHERE account = #{account})))
+  	
+  </select>
+  
+  <select id="findLeftMenu" resultType="SysPermission" parameterType="String">
+  	SELECT id,name,target,url,parentid,parentids FROM sys_permission WHERE pertype = 'leftmenu' AND id IN (
+
+	SELECT sys_permission_id FROM sys_role_permission WHERE sys_role_id IN (
+    SELECT sys_role_id FROM sys_user_role WHERE sys_user_id = (SELECT userid FROM sys_user WHERE account = #{account} ))) AND parentid = #{menuid} and status = 1
+  </select>
+  
+  <resultMap type="SysDuty" id="SysRoleMap">
+  	<id column="roleid" property="roleid" />
+  	<result column="orders" property="order"/>
+  	<result column="id" property="deptid"/>
+  	<result column="name" property="deptname"/>
+  </resultMap>
+  
+  <select id="getRoleList" resultMap="SysRoleMap">
+  	SELECT role.roleid,role.rolename,role.uri,role.level,role.target,role.status,role.orders,role.parentid,dept.id,dept.name FROM sys_role AS role LEFT JOIN sys_dept AS dept ON role.`deptid` = dept.`id`
+  </select>
+  
+  <insert id="rolelistAddSave" >
+  	insert into sys_role (roleid,rolename,status,uri,target,orders,level,parentid,deptid) values (#{uuid},#{rolename},#{status},#{uri},#{target},#{order},#{level},#{parentid},#{duty})
+  </insert>
+  
+  <update id="rolelisteditSave">
+  	 UPDATE sys_role SET rolename=#{rolename} , STATUS = #{status} WHERE roleid = #{roleid}
+  </update>
+  
+  <select id="getRoleDistributeTotal" resultType="int">
+  	SELECT COUNT(*) FROM (SELECT * FROM sys_user LEFT JOIN sys_user_role ON sys_user.`userid` = sys_user_role.`sys_user_id` GROUP BY account)temp 
+  </select>
+  
+  <select id="getRoleDistributeList" resultType="ActiveUser">
+  	SELECT userid,account,username,STATUS FROM sys_user LEFT JOIN sys_user_role ON sys_user.`userid` = sys_user_role.`sys_user_id` GROUP BY account LIMIT #{begin},#{pagesize}
+  </select>
+  
+  <delete id="deleteOldRoleByAccount" parameterType="String">
+  	DELETE FROM sys_user_role WHERE sys_user_id = (SELECT userid FROM sys_user WHERE account = #{account})
+  </delete>
+  
+  <delete id="deleteOldDeptByUserId" parameterType="String">
+    DELETE FROM sys_user_dept WHERE userid = #{userid}
+  </delete>
+  
+  <insert id="saveUserRole" parameterType="String">
+  	insert into sys_user_role (id,sys_user_id,sys_role_id) values (#{uuid} , #{userid} , #{role})
+  </insert>
+  
+  <select id="getSysUserTotal" resultType="int">
+  	SELECT COUNT(*) FROM sys_user
+  </select>
+  
+  <select id="getSysUserList" resultType="SysUser" >
+  	select * from sys_user limit #{begin},#{pagesize}
+  </select>
+  
+  <insert id="addExceptionInfo" parameterType="String">
+  	  INSERT INTO sys_exceptionrecord (exceptiontype,uri,ipaddress,executor,executetime,exceptioncause) VALUES (#{exceptiontype},#{uri},#{ipaddress},#{executor},#{executetime},#{exceptioncause}) 
+  </insert>
+  
+  <select id="findSystemExceptionRecord" parameterType="int" resultType="ExceptionRecord">
+  	SELECT * FROM sys_exceptionrecord LIMIT #{begin},#{pagesize}
+  </select>
+  
+  <select id="getExceptionRecordTotal" resultType="int">
+  	SELECT count(*) FROM sys_exceptionrecord
+  </select>
+  
+  <insert id="addExecuteRecordInfo"  parameterType="String">
+  	INSERT INTO sys_executerecord (description,uri,usetime,ipaddress,executor,executetime) VALUE (#{description},#{url},#{usetime},#{realIp},#{account},#{executeTime})
+  </insert>
+  
+  <select id="getExecuteRecordTotal" resultType="int">
+  	select count(*) from sys_executerecord
+  </select>
+  
+  <select id="findSystemExecuteRecord" parameterType="int" resultType="ExecuteRecord">
+  	select * from sys_executerecord LIMIT #{begin},#{pagesize}
+  </select>
+  
+  <select id="findPermissionList" resultType="SysPermission" >
+  	select * from sys_permission
+  </select>
+  
+  <update id="permissionEditSave">
+  	update sys_permission set status = #{status} where id = #{id}
+  </update>
+  
+  <select id="findIsPermissionAuthorization" resultType="SysPermissionAuthorization">
+  	select * from sys_permission
+  </select>
+  
+  <select id="findHasPermissionsByRole" resultType="RolePermission"> 
+  	SELECT * FROM sys_role_permission WHERE sys_role_id =#{roleid}
+  </select>
+  
+  <insert id="correlationPermissions" parameterType="String">
+  	insert into sys_role_permission (id,sys_role_id,sys_permission_id) values (#{id},#{roleid},#{permissionid})
+  </insert>
+  
+  <delete id="removePermissionForRole" parameterType="String">
+  	delete from sys_role_permission where sys_role_id = #{roleid} and sys_permission_id = #{permissionid}
+  </delete>
+  
+  <select id="findPermissionsByUser" parameterType="String" resultType="SysPermission">
+  SELECT percode FROM sys_permission WHERE id IN(
+	SELECT sys_permission_id FROM sys_role_permission WHERE sys_role_id IN 
+	(SELECT sys_role_id FROM sys_user_role WHERE sys_user_id = #{userid})) AND sys_permission.`status` = 1 AND sys_permission.`percode` !='' AND sys_permission.`percode`IS NOT NULL
+  </select>
+  
+  <delete id="deleteRolePermission">
+  DELETE FROM sys_role_permission WHERE sys_permission_id = #{id}
+  </delete>
+  
+  <resultMap type="SysDept" id="SysDeptMap">
+  	<id column="id" property="id" />
+  	<result column="orders" property="order"/>
+  </resultMap>
+  
+  <select id="findDeptList" resultMap="SysDeptMap">
+  	select * from sys_dept
+  </select>
+  
+  <insert id="addDept" parameterType="SysDept">
+    insert into sys_dept (id,name,level,orders,parentid,status) values (#{dept.id},#{dept.name},#{dept.level},#{dept.order},#{dept.parentid},#{dept.status})
+  </insert>
+  
+  <update id="editDept" parameterType="SysDept">
+    UPDATE sys_dept SET NAME = #{dept.name}, STATUS = #{dept.status} WHERE id = #{dept.id}
+  </update>
+  
+  <resultMap type="SysPermissionTree" id="treeMap">
+    <id column="id" property="id"/>
+    <result column="name" property="name"/>
+    <result column="parentid" property="pId"/>
+  </resultMap>
+  
+  <select id="getPermissionTree" resultMap="treeMap">
+    select * from sys_permission
+  </select>
+  
+  <insert id="initPermissionForRole" parameterType="String">
+    INSERT INTO sys_role_permission (id,sys_role_id,sys_permission_id) VALUES (#{id},#{roleid},#{permission})
+  </insert>
+  
+  <select id="findRolesByDeptid" parameterType="String" resultType="String">
+    SELECT roleid FROM sys_role WHERE deptid = #{deptid}
+  </select>
+  
+  <select id="getSysDeptByUserid" parameterType="String" resultType="SysDept">
+    SELECT id,NAME FROM sys_dept WHERE id IN (SELECT deptid FROM sys_user_dept WHERE userid = #{userid})
+  </select>
+  
+  <resultMap type="SysUser" id="findAllDeptDutyMap">
+    <id column="id" property="deptid"/>
+    <result column="name" property="dept"/>
+    <result column="roleid" property="dutyid"/>
+    <result column="rolename" property="duty"/>
+  </resultMap>
+  
+  <select id="findAllDeptDuty" resultMap="findAllDeptDutyMap">
+    SELECT dept.id,dept.name,role.roleid,role.rolename FROM sys_dept AS dept LEFT JOIN sys_role AS role ON role.`deptid` = dept.id
+  </select>
+  
+  <select id="findDeptDutyByUserid" resultMap="findAllDeptDutyMap">
+    SELECT id,NAME,roleid,rolename FROM (SELECT * FROM sys_dept WHERE id IN (SELECT deptid FROM sys_user_dept WHERE userid = #{userid}))deptlist LEFT JOIN 
+    (SELECT * FROM sys_role WHERE roleid IN (SELECT sys_role_id FROM sys_user_role WHERE sys_user_id = #{userid}))rolelist ON deptlist.id = rolelist.deptid
+    
+  </select>
+  
+  <insert id="addDeptForUser">
+    INSERT INTO sys_user_dept (id,userid,deptid) VALUES (#{id},#{userid},#{deptid})
+  </insert>
+</mapper>
