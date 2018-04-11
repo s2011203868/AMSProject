@@ -17,7 +17,9 @@ import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.purple.ams.ssm.exception.AMSException;
+import com.purple.ams.ssm.mapper.SysUserMapper;
 import com.purple.ams.ssm.pojo.ActiveUser;
+import com.purple.ams.ssm.pojo.SysDept;
 import com.purple.ams.ssm.pojo.SysPermission;
 import com.purple.ams.ssm.pojo.SysRole;
 import com.purple.ams.ssm.pojo.SysUser;
@@ -33,6 +35,8 @@ public class AMSRealm extends AuthorizingRealm {
 
 	@Autowired
 	private SysUserService sysUserService;
+	@Autowired
+	private SysUserMapper sysUsermapper;
 	
 	@Override
 	protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
@@ -45,9 +49,11 @@ public class AMSRealm extends AuthorizingRealm {
 			ActiveUser activeUser = new ActiveUser();
 			List<SysPermission> menuList;
 			List<SysRole> roles;
+			List<SysDept> depts;
 			String password = "";
 			String salt = "";
 			String roleName = "";
+			String deptName = "";
 		try {	
 			sysUser= sysUserService.findUserByAccount(account);
 			
@@ -55,6 +61,21 @@ public class AMSRealm extends AuthorizingRealm {
 				return null;
 			}else{
 				roles = sysUserService.finUserRolesByAccount(account);
+				depts = sysUsermapper.getSysDeptByUserid(sysUser.getUserid());
+				
+				if(depts !=null){
+                    for(SysDept sysDept : depts){
+                        deptName += sysDept.getName();
+                        deptName += "/";
+                    }
+                }
+                
+                if(deptName !="" && deptName !=null){
+                    deptName = deptName.substring(0,deptName.length()-1);
+                }else{
+                    deptName = "暂无部门";
+                }
+				
 				if(roles!=null){
 					for(SysRole role : roles){
 						roleName += role.getRolename();
@@ -64,8 +85,11 @@ public class AMSRealm extends AuthorizingRealm {
 				if(roleName !="" && roleName !=null){
 					roleName = roleName.substring(0,roleName.length()-1);
 				}else{
-					roleName = "暂无角色";
+					roleName = "暂无岗位";
 				}
+				
+				
+				
 				password = sysUser.getPassword();
 				salt = sysUser.getSalt();
 				activeUser.setUserid(sysUser.getUserid());
@@ -75,6 +99,7 @@ public class AMSRealm extends AuthorizingRealm {
 				activeUser.setSalt(sysUser.getSalt());
 				activeUser.setRole(roleName);
 				activeUser.setStatus(sysUser.getStatus());
+				activeUser.setDept(deptName);
 				menuList = sysUserService.findUserMenusByAccount(account);
 				activeUser.setMenus(menuList);
 			}

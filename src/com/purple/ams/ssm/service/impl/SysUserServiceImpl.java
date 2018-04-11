@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -522,6 +523,13 @@ public class SysUserServiceImpl implements SysUserService {
 		return json;
 	}
 
+	@Override
+    public String findAllDept() throws Exception {
+        List<SysDept> list = sysUserMapper.findAllDept();
+        String result = JSONArray.fromObject(list.toArray()).toString();
+        String json ="{\"totalRow\":200 ,\"pageNumber\":1,\"firstPage\":true,\"lastPage\":false,\"totalPage\":1,\"pageSize\":200, \"list\":"+result+"}";
+        return json;
+    }
 
 
     @Override
@@ -599,6 +607,33 @@ public class SysUserServiceImpl implements SysUserService {
             }
         }
         return result;
+    }
+
+    /**
+     * 修改岗位状态
+     */
+
+    @Override
+    public int updateRoleStatus(String roleid, String status) throws Exception {
+        int n = sysUserMapper.updateRoleStatus(roleid,status);
+        return n;
+    }
+
+
+    /**
+     * 删除部门下相关用户
+     */
+    @Override
+    public int deleteOldUserByDeptId(String deptid) throws Exception {
+        int n = sysUserMapper.deleteOldUserByDeptId(deptid);
+        return n;
+    }
+
+
+    @Override
+    public int finddeptStatusByRoleid(String roleid) throws Exception {
+        int n = sysUserMapper.finddeptStatusByRoleid(roleid);
+        return n;
     }
 
 

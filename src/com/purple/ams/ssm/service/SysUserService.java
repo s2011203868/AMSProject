@@ -96,6 +96,8 @@ public interface SysUserService {
     String findOnlineUser()throws Exception;
 
 	String findDeptList()throws Exception;
+	
+    String findAllDept() throws Exception;
 
     int addDept(SysDept sysDept)throws Exception;
 
@@ -114,5 +116,11 @@ public interface SysUserService {
     String findDeptDutyByUserid(String userid)throws Exception;
 
     int deleteOldDeptByUserid(String userid)throws Exception;
+
+    int updateRoleStatus(String roleid, String status) throws Exception;
+
+    int deleteOldUserByDeptId(String id)throws Exception;
+
+    int finddeptStatusByRoleid(String roleid)throws Exception;
 
 }

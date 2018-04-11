@@ -68,10 +68,22 @@ function hideMenu() {
     $("body").unbind("mousedown", onBodyDown);
 }
 
+
+function inItSelect(obj,isdept){
+	for(var i = 0 ; i<obj.options.length;i++){
+        if(isdept === obj.options[i].value){
+            obj.options[i].selected=true;
+        }
+    }
+}
+
 $(document).ready(function(){
 	
+	var isdept = $('#isdept').val();
+    var obj = document.getElementById("deptsid");
+    inItSelect(obj,isdept);
+    
 	var zNodes = [];
-	
 	$.ajax({
 		url:'getPermissionTree.action',
 		type:'post',
@@ -87,7 +99,6 @@ $(document).ready(function(){
 		$.fn.zTree.init($("#permissionzTree"), setting, zNodes);
 	},500)
     
-    
 });
 </script>
 </head>
@@ -99,11 +110,12 @@ $(document).ready(function(){
                 <label class="row-label">岗位名称</label>
                 <div class="row-input required">
                     <input type="text" name="rolename"  data-rule="required">
+                    <input type="hidden" id ="isdept" value="${deptid }" >
                 </div>
                 <label class="row-label">所属部门</label>
                 <div class="row-input required">
-                    <select name="duty" data-rule="required" data-toggle="selectpicker">
-                        <option value="" selected="">--选择部门--</option>
+                    <select name="duty" id="deptsid" data-rule="required" data-toggle="selectpicker">
+                        <option value="">--选择部门--</option>
                         <c:forEach var="dept" items="${deptList }" varStatus="status">
                              <option value="${dept.id }">${ dept.name }</option>
                         </c:forEach>

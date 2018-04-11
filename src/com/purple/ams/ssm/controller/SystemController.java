@@ -136,11 +136,11 @@ public class SystemController {
 	}
 
 	@RequestMapping("editDuty")
-	@Transactional(propagation=Propagation.REQUIRED)
-	public String roleListEdit(Model model, @RequestParam(value = "roleid") String roleid,
+	@RequiresPermissions("system:editDuty")
+	public String roleListEdit(Model model, @RequestParam(value = "roleid",defaultValue="") String roleid,
 			@RequestParam(value = "rolename", defaultValue = "") String rolename,
 			@RequestParam(value = "status", defaultValue = "1") String status,
-			@RequestParam(value="deptid")String deptid) throws Exception {
+			@RequestParam(value="deptid",defaultValue="")String deptid) throws Exception {
 
 	    List<SysDept> deptList = sysUserMapper.findDeptList();
         model.addAttribute("deptList",deptList);
@@ -152,16 +152,26 @@ public class SystemController {
 	}
 	
 	@RequestMapping("addNewDuty")
-	public String addNewDuty(Model model) throws Exception{
-	    List<SysDept> deptList = sysUserMapper.findDeptList();
-	    model.addAttribute("deptList",deptList);
-        return "system/rolelistadd";
+	@RequiresPermissions("system:addnewduty")
+	public String addNewDuty(Model model,@RequestParam(value="deptid",defaultValue="")String deptid) throws Exception{
+	    
+	    if("".equals(deptid)){
+	        List<SysDept> deptList = sysUserMapper.findDeptList();
+	        model.addAttribute("deptList",deptList);
+	        return "system/rolelistadd";
+	    }else{
+	        List<SysDept> deptList = sysUserMapper.findDeptList();
+            model.addAttribute("deptList",deptList);
+            model.addAttribute("deptid",deptid);
+            return "system/rolelistadd";
+	    }
+	    
 	}
 
 	@RequestMapping("rolelistAddSave")
 	@ResponseBody
 	@Transactional(propagation=Propagation.REQUIRED)
-	@RequiresPermissions("system:addrole")
+	//@RequiresPermissions("system:addrole")
 	public String rolelistAddSave(@RequestParam(value = "rolename") String rolename,
 			@RequestParam(value = "status") String status,@RequestParam(value="duty")String duty,
 			@RequestParam(value="permissions",defaultValue="")String permissions) throws Exception {
@@ -173,7 +183,7 @@ public class SystemController {
 		String roleid = UUID.randomUUID().toString().replaceAll("-","").trim();
 		n = sysUserService.rolelistAddSave(roleid,rolename, status,duty);
 		
-		if(permissions != null){
+		if(permissions != null && !"".equals(permissions)){
             String [] permission = permissions.split(",");
             for(String per : permission){
                 String id = UUID.randomUUID().toString().replaceAll("-","").trim();
@@ -193,8 +203,8 @@ public class SystemController {
 	@RequestMapping("rolelisteditSave")
 	@ResponseBody
 	@Transactional(propagation=Propagation.REQUIRED)
-	@RequiresPermissions("system:editrole")
-	public String rolelisteditSave(HttpServletResponse response, @RequestParam(value = "roleid") String roleid,
+	//@RequiresPermissions("system:editrole")
+	public String rolelisteditSave(@RequestParam(value = "roleid") String roleid,
 			@RequestParam(value = "rolename") String rolename, @RequestParam(value = "status") String status) throws Exception {
 		
 		String res = "";
@@ -207,12 +217,18 @@ public class SystemController {
 			res = ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_ERRORSTATUS, "系统管理员角色无法修改！");
 		}else{
 			int n = 0;
+			if("1".equals(status)){
+			    int deptStatus = sysUserService.finddeptStatusByRoleid(roleid);
+			    if(deptStatus == 2){
+			        return ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_ERRORSTATUS, "请先启用部门！");
+			    }
+			}
 			n = sysUserService.rolelisteditSave(roleid, rolename, status);
 			if("2".equals(status)){
 			  sysUserService.deleteUserRoleByRoleid(roleid);
 			}
 			if (n > 0) {
-				response.setIntHeader("Refresh", 1);
+				//response.setIntHeader("Refresh", 1);
 				res = ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_OKSTATUS, "修改成功！");
 			} else {
 				res = ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_ERRORSTATUS, "修改失败！");
@@ -225,7 +241,9 @@ public class SystemController {
 	 * @Title: roleDistribute @Description: 跳转到角色分配页 @param @param
 	 * model @param @return 设定文件 @return String 返回类型 @throws
 	 */
-	@RequestMapping("system/roledistribute")
+	
+	
+	/*@RequestMapping("system/roledistribute")
 	public String roleDistribute(Model model) {
 		return "system/roledistributelist";
 	}
@@ -289,7 +307,7 @@ public class SystemController {
 	@RequestMapping("selectRoleSave")
 	@ResponseBody
 	@Transactional(propagation=Propagation.REQUIRED)
-	@RequiresPermissions("system:selectrole")
+	//@RequiresPermissions("system:selectrole")
 	public String selectRoleSave(Model model, @RequestParam(value = "account") String account,
 			@RequestParam(value = "role",defaultValue="") String role,
 			@RequestParam(value = "userid") String userid,@RequestParam(value="status")String status) throws Exception {
@@ -326,7 +344,7 @@ public class SystemController {
 			}
 			return res;
 		}
-	}
+	}*/
 
 	/**
 	 * 
@@ -398,7 +416,7 @@ public class SystemController {
 	@RequiresPermissions("system:createuser")
 	public String userlistAddSave(@RequestParam(value = "account") String account,
 			@RequestParam(value = "password") String password, @RequestParam(value = "status") String status,
-			@RequestParam(value = "username") String username,@RequestParam(value="deptduty")String deptduty) throws Exception {
+			@RequestParam(value = "username") String username,@RequestParam(value="deptduty",defaultValue="")String deptduty) throws Exception {
 
 		String nowTime = FunctionUtil.dateToStr(new Date());
 		String salt = FunctionUtil.randomSixCharStr();
@@ -410,32 +428,34 @@ public class SystemController {
 		String userid = FunctionUtil.getUUID();
 		n = sysUserService.createSysUser(userid,account, md5Password, username, nowTime, salt, status);
 		
-		if(deptduty.contains(",")){
-            String [] deptdutys = deptduty.split(","); 
-            for(String deptdutyids : deptdutys){
-                String [] ids = deptdutyids.split(";");
-                if(ids[0] !=null && ids[0] != "" && ids[0] !="null"){
-                    String id = FunctionUtil.getUUID();
-                    m += sysUserService.addDeptForUser(id,userid,ids[0]);
-                }
-                if(ids[1] !=null && ids[1] != "" && ids[1] !="null"){
-                    String id = FunctionUtil.getUUID();
-                    m += sysUserService.saveUserRole(id,userid,ids[1]);
-                }
-            }
-        }else{
-            String [] ids = deptduty.split(";");
-            if(ids[0] !=null && ids[0] != "" && ids[0] !="null"){
-                String id = FunctionUtil.getUUID();
-                String deptid = ids[0];
-                m += sysUserService.addDeptForUser(id,userid,deptid);
-            }
-            if(ids[1] !=null && ids[1] != "" && ids[1] !="null"){
-                String id = FunctionUtil.getUUID();
-                String dutyid = ids[1];
-                m += sysUserService.saveUserRole(id,userid,dutyid);
-            }
-        }
+		if(deptduty !=""){
+		    if(deptduty.contains(",")){
+	            String [] deptdutys = deptduty.split(","); 
+	            for(String deptdutyids : deptdutys){
+	                String [] ids = deptdutyids.split(";");
+	                if(ids[0] !=null && ids[0] != "" && ids[0] !="null"){
+	                    String id = FunctionUtil.getUUID();
+	                    m += sysUserService.addDeptForUser(id,userid,ids[0]);
+	                }
+	                if(ids[1] !=null && ids[1] != "" && ids[1] !="null"){
+	                    String id = FunctionUtil.getUUID();
+	                    m += sysUserService.saveUserRole(id,userid,ids[1]);
+	                }
+	            }
+	        }else{
+	            String [] ids = deptduty.split(";");
+	            if(ids[0] !=null && ids[0] != "" && ids[0] !="null"){
+	                String id = FunctionUtil.getUUID();
+	                String deptid = ids[0];
+	                m += sysUserService.addDeptForUser(id,userid,deptid);
+	            }
+	            if(ids[1] !=null && ids[1] != "" && ids[1] !="null"){
+	                String id = FunctionUtil.getUUID();
+	                String dutyid = ids[1];
+	                m += sysUserService.saveUserRole(id,userid,dutyid);
+	            }
+	        }
+		}
 		if (n > 0 && m>=0) {
 			return ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_OKSTATUS, "创建系统用户成功！");
 		} else {
@@ -517,6 +537,7 @@ public class SystemController {
 	
 	@RequestMapping("EditUserStatus")
 	@ResponseBody
+	@RequiresPermissions("system:EditUserStatus")
 	public String editUserStatus(@RequestParam(value="json")String json) throws Exception{
 	    JSONArray array = JSONArray.fromObject(json);
 	    JSONObject obj = array.getJSONObject(0);
@@ -574,7 +595,7 @@ public class SystemController {
 	
 	@RequestMapping("systemexceptionrecordexport")
 	@ResponseBody
-	@RequiresPermissions("system:exportexception")
+	//@RequiresPermissions("system:exportexception")
 	public String systemExceptionRecordExport(HttpServletRequest request,HttpServletResponse response,
 			@RequestParam(value="pageCurrent")String pageCurrent,@RequestParam(value="pageSize")String pageSize) throws Exception{
 		
@@ -618,6 +639,11 @@ public class SystemController {
 	 */
 	@RequestMapping("system/druid")
 	public String goDruidHtml(Model model) throws Exception{
+	    InputStream is = SystemController.class.getClassLoader().getResourceAsStream("config.properties");
+        Properties properties = new Properties();
+        properties.load(is);
+        String ip = properties.getProperty("ipAddress");
+        model.addAttribute("ipAddress", ip);
 		return "system/druidPage";
 	}
 	
@@ -659,7 +685,7 @@ public class SystemController {
 	@RequestMapping("permissioneditsave")
 	@ResponseBody
 	@Transactional(propagation=Propagation.REQUIRED)
-	@RequiresPermissions("system:editpermission")
+	//@RequiresPermissions("system:editpermission")
 	public String permissioneditsave(SysPermission permission)throws Exception{
 		String id = permission.getId();
 		int status = permission.getStatus();
@@ -694,6 +720,7 @@ public class SystemController {
 	}
 	
 	@RequestMapping("permissionlisttree")
+	@RequiresPermissions("system:setDutyPermission")
 	public String permissionlisttree(Model model,@RequestParam(value="roleid")String roleid){
 		model.addAttribute("roleid",roleid);
 		return "system/permissionlisttree";
@@ -709,7 +736,7 @@ public class SystemController {
 	 */
 	@RequestMapping("findIsPermissionAuthorization")
 	@ResponseBody
-	@RequiresPermissions("system:querypermissionbyrole")
+	//@RequiresPermissions("system:querypermissionbyrole")
 	public String findIsPermissionAuthorization(Model model,@RequestParam(value="roleid")String roleid) throws Exception{
 		
 		String json = sysUserService.findIsPermissionAuthorization(roleid);
@@ -743,7 +770,8 @@ public class SystemController {
 	 */
 	@RequestMapping("addPermissionForRole")
 	@ResponseBody
-	@RequiresPermissions("system:addpermissionforrole")
+	@Transactional(propagation=Propagation.REQUIRED)
+	//@RequiresPermissions("system:addpermissionforrole")
 	public String addPermissionForRole(@RequestParam(value="roleid")String roleid,
 			@RequestParam(value="permissionid")String permissionid) throws Exception{
 		
@@ -775,30 +803,34 @@ public class SystemController {
 	* @throws
 	 */
 	@RequestMapping("addPermissionForDept")
+	@Transactional(propagation=Propagation.REQUIRED)
 	@ResponseBody
 	public String addPermissionForDept(@RequestParam(value="deptid")String deptid,
 	        @RequestParam(value="permissionid")String permissionid) throws Exception{
 	    
 	    int n = 0;
 	    List<String> roles = sysUserMapper.findRolesByDeptid(deptid);
-        if(permissionid.contains(",")){
-            String [] pers = permissionid.split(",");
-            for(int i = 0 ; i< pers.length ;i++){
+        if(roles.size() == 0){
+            return ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_ERRORSTATUS, "请先为部门设置岗位!");
+        }else{
+            if(permissionid.contains(",")){
+                String [] pers = permissionid.split(",");
+                for(int i = 0 ; i< pers.length ;i++){
+                    for(String roleid : roles){
+                        n += sysUserService.correlationPermissions(roleid, pers[i]);
+                    }
+                }
+            }else{
                 for(String roleid : roles){
-                    n += sysUserService.correlationPermissions(roleid, pers[i]);
+                    n = sysUserService.correlationPermissions(roleid, permissionid);
                 }
             }
-        }else{
-            for(String roleid : roles){
-                n = sysUserService.correlationPermissions(roleid, permissionid);
+            
+            if(n>0){
+                return ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_OKSTATUS, "赋权成功!");
+            }else{
+                return ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_ERRORSTATUS, "赋权失败!");
             }
-        }
-        
-        
-        if(n>0){
-            return ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_OKSTATUS, "赋权成功!");
-        }else{
-            return ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_ERRORSTATUS, "赋权失败!");
         }
 	    
 	}
@@ -813,7 +845,8 @@ public class SystemController {
 	 */
 	@RequestMapping("removePermissionForRole")
 	@ResponseBody
-	@RequiresPermissions("system:removepermissionforrole")
+	@Transactional(propagation=Propagation.REQUIRED)
+	//@RequiresPermissions("system:removepermissionforrole")
 	public String removePermissionForRole(@RequestParam(value="roleid")String roleid,
 			@RequestParam(value="permissionid")String permissionid) throws Exception{
 	    int n = 0;
@@ -846,6 +879,7 @@ public class SystemController {
 	 */
 	@RequestMapping("removePermissionForDept")
 	@ResponseBody
+	@Transactional(propagation=Propagation.REQUIRED)
 	public String removePermissionForDept(@RequestParam(value="deptid")String deptid,
             @RequestParam(value="permissionid")String permissionid) throws Exception{
 	    int n = 0;
@@ -885,20 +919,32 @@ public class SystemController {
 	@RequestMapping("finddeptList")
 	@ResponseBody
 	public String findDeptList() throws Exception{
-		String json = sysUserService.findDeptList();
+		String json = sysUserService.findAllDept();
 		return json;
 		
 	}
 	
 	@RequestMapping("setingdeptpermission")
+	@RequiresPermissions("system:setdeptpermission")
 	public String setingdeptpermission(Model model,@RequestParam(value="deptid")String deptid){
 	    model.addAttribute("deptid", deptid);
         return "system/deptPermissionTree";
 	    
 	}
 	
+	/**
+	* @Title: editDept  
+	* @Description: 部门状态设置  
+	* @param @param json
+	* @param @return
+	* @param @throws Exception    设定文件  
+	* @return String    返回类型  
+	* @throws
+	 */
 	@RequestMapping("editdept")
 	@ResponseBody
+	@Transactional(propagation=Propagation.REQUIRED)
+	@RequiresPermissions("system:editdept")
 	public String editDept(@RequestParam(value="json")String json) throws Exception{
 	   // [{"name":"123","status":"1","level":2,"parentid":"c1a2b276be4841adb53095d85a78c9d9","order":0,"addFlag":true}]
 
@@ -934,7 +980,21 @@ public class SystemController {
 	        sysDept.setName(name);
 	        sysDept.setStatus(Integer.parseInt(status));
 	        int n = sysUserService.editDept(sysDept);
-	        if(n>0){
+	        int m = 0;
+	        int x = 0;
+	        int y = 0;
+	        if("2".equals(status)){
+	            //禁用其部门下的所有岗位,删除其部门下岗位的所有用户关系
+	            List<String> roles = sysUserMapper.findRolesByDeptid(id);
+	            for(String roleid : roles){
+	                m += sysUserService.updateRoleStatus(roleid,status);
+	                y += sysUserService.deleteUserRoleByRoleid(roleid);
+	            }
+	            //删除其部门下的所有用户关系
+	                x += sysUserService.deleteOldUserByDeptId(id);
+	            
+	        }
+	        if(n>0 && m>=0 && x>=0 && y >=0){
                 return ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_OKSTATUS, "修改部门成功!");
             }else{
                 return ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_ERRORSTATUS, "修改部门失败!");

@@ -23,6 +23,7 @@ public class ActiveUser implements Serializable{
 	private String salt;
 	private List<SysPermission> menus;
 	private List<SysPermission> permissions;
+	private String dept;
 	
 	
 	public String getUserid() {
@@ -82,20 +83,31 @@ public class ActiveUser implements Serializable{
 	}
 	
 	
+	
+	
+	public String getDept() {
+        return dept;
+    }
+    public void setDept(String dept) {
+        this.dept = dept;
+    }
+
+    
 	public ActiveUser(String userid, String account, String password, String username, String role, int status,
-			String salt,  List<SysPermission> menus, List<SysPermission> permissions) {
-		super();
-		this.userid = userid;
-		this.account = account;
-		this.password = password;
-		this.username = username;
-		this.role = role;
-		this.status = status;
-		this.salt = salt;
-		this.menus = menus;
-		this.permissions = permissions;
-	}
-	public ActiveUser() {
+            String salt, List<SysPermission> menus, List<SysPermission> permissions, String dept) {
+        super();
+        this.userid = userid;
+        this.account = account;
+        this.password = password;
+        this.username = username;
+        this.role = role;
+        this.status = status;
+        this.salt = salt;
+        this.menus = menus;
+        this.permissions = permissions;
+        this.dept = dept;
+    }
+    public ActiveUser() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

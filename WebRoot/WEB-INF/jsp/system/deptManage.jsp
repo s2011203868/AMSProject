@@ -15,12 +15,13 @@ $('#deptListTree').datagrid({
     dataUrl: 'finddeptList.action',
     editUrl:'editdept.action',
     inlineEditMult: false,
+    showLinenumber:false,//是否显示行号
     isTree: 'name',
     addLocation: 'last',
     showCheckboxcol:true,
     showToolbar:true,
     toolbarItem:'refresh,cancel,|,save',
-    toolbarCustom:'<button type="button" onclick="setingdeptpermission()" class="btn-red" data-icon="cog">功能权限</button>',
+    toolbarCustom:'<button type="button" class="btn-orange" onclick="setNewDuty()" data-icon="plus-circle">新增岗位</button> <button type="button" onclick="setingdeptpermission()" class="btn-red" data-icon="cog">功能权限</button>',
     fieldSortable: false,
     filterThead:false,
     columnMenu: false,
@@ -71,6 +72,31 @@ function setingdeptpermission(){
         }
     });
     
+}
+
+function setNewDuty(){
+	if($("#deptListTree").data('selectedDatas') == null){
+        BJUI.alertmsg('info', '未选择一项！');
+        return
+    }
+    if($("#deptListTree").data('selectedDatas')[0].status == '2'){
+        BJUI.alertmsg('info', '该部门已停用！');
+        return
+    }
+    var deptid = $("#deptListTree").data('selectedDatas')[0].id;
+	BJUI.dialog({
+        id:'addNewDutyid',
+        width:'700',
+        height:'500',
+        data:{'deptid':deptid},
+        mask:true,
+        url:'addNewDuty.action',
+        
+        title:'新增岗位',
+        onClose:function(){
+            $('#rolelisttable').datagrid('refresh',true);
+        }
+    });
 }
 
 </script>

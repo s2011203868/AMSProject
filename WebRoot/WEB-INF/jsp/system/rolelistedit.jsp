@@ -6,6 +6,11 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>角色修改页</title>
+<script type="text/javascript">
+function colseeditroledialog(){
+	BJUI.dialog('close','editDutystatusid');
+}
+</script>
 </head>
 <body>
 <div class="bjui-pageContent">
@@ -19,7 +24,7 @@
                 </div>
                 <label class="row-label">所属部门</label>
                 <div class="row-input required">
-                    <select name="duty" data-rule="required" data-toggle="selectpicker">
+                    <select name="duty" disabled="" data-rule="required" data-toggle="selectpicker">
                         <c:forEach var="dept" items="${deptList }" varStatus="status">
                              <c:if test="${deptid eq dept.id }">
                                 <option value="${dept.id }" selected="">${ dept.name }</option>
@@ -48,7 +53,7 @@
 <div class="bjui-pageFooter">
     <ul>
         <li><button type="button" class="btn-close" data-icon="close">取消</button></li>
-        <li><button type="submit" class="btn-default" data-icon="save">保存</button></li>
+        <li><button type="submit" onclick="colseeditroledialog();" class="btn-default" data-icon="save">保存</button></li>
     </ul>
 </div>
 </body>

@@ -236,7 +236,8 @@ function bjui_index_exchange() {
                 <ul class="nav navbar-nav navbar-right">
                     <li class="datetime"><a><span id="bjui-date">0000/00/00</span> <span id="bjui-clock">00:00:00</span></a></li>
                     <li><a href="javascript:;">账号：${ activeUser.username }</a></li>
-                    <li><a href="javascript:;">岗位角色：${ activeUser.role }</a></li>
+                    <li><a href="javascript:;">部门：${ activeUser.dept }</a></li>
+                    <li><a href="javascript:;">岗位：${ activeUser.role }</a></li>
                     <li><a href="changepassword.action?activeUser=${activeUser }" data-toggle="dialog" data-id="sys_user_changepass" data-mask="true" data-width="400" data-height="300">修改密码</a></li>
                     <li><a href="${basePath}logout.action" style="font-weight:bold;">&nbsp;<i class="fa fa-power-off"></i> 退出</a></li>
                     

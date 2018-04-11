@@ -197,7 +197,11 @@
   </resultMap>
   
   <select id="findDeptList" resultMap="SysDeptMap">
-  	select * from sys_dept
+  	select * from sys_dept where status = 1
+  </select>
+  
+  <select id="findAllDept" resultMap="SysDeptMap">
+    select * from sys_dept
   </select>
   
   <insert id="addDept" parameterType="SysDept">
@@ -238,7 +242,7 @@
   </resultMap>
   
   <select id="findAllDeptDuty" resultMap="findAllDeptDutyMap">
-    SELECT dept.id,dept.name,role.roleid,role.rolename FROM sys_dept AS dept LEFT JOIN sys_role AS role ON role.`deptid` = dept.id
+    SELECT temp.id,temp.name,temp.roleid,temp.rolename FROM(SELECT dept.id,dept.name,role.roleid,role.rolename,dept.status FROM sys_dept AS dept LEFT JOIN sys_role AS role ON role.`deptid` = dept.id)temp WHERE temp.status = 1
   </select>
   
   <select id="findDeptDutyByUserid" resultMap="findAllDeptDutyMap">
@@ -250,4 +254,17 @@
   <insert id="addDeptForUser">
     INSERT INTO sys_user_dept (id,userid,deptid) VALUES (#{id},#{userid},#{deptid})
   </insert>
+  
+  <update id="updateRoleStatus" parameterType="String">
+    UPDATE sys_role SET STATUS = #{status} WHERE roleid = #{roleid}
+  </update>
+  
+  <delete id="deleteOldUserByDeptId" parameterType="String">
+    DELETE FROM sys_user_dept WHERE deptid = #{deptid}
+  </delete>
+  
+  <select id="finddeptStatusByRoleid" resultType="int" parameterType="String">
+    SELECT STATUS FROM sys_dept WHERE id =
+    (SELECT deptid FROM sys_role WHERE roleid = #{roleid})  
+  </select>
 </mapper>

@@ -8,7 +8,7 @@
 <script type="text/javascript">
 // department
 function datagrid_tree_type() {
-    return [{'topmenu':'Top菜单'},{'leftmenu':'Left菜单'},{'button':'按钮'}]
+    return [{'topmenu':'TopMenu'},{'leftmenu':'LeftMenu'},{'button':'Button'}]
 }
 
 function datagrid_tree_status(value,data) {
@@ -41,7 +41,7 @@ $('#permissionManagerListTree').datagrid({
     addLocation: 'last',
     fieldSortable: false,
     filterThead:false,
-    columnMenu: false,
+    //columnMenu: false,
     paging:{pageSize:100,selectPageSize:'120,150', showPagenum:1},
     afterSave:function(){
 		$('#permissionManagerListTree').datagrid('refresh',true);
@@ -53,7 +53,85 @@ $('#permissionManagerListTree').datagrid({
         keys: {
             parentKey: 'parentid',
         }
-    }
+    },
+    columns:[
+    	{
+            name: 'name',
+            label: '资源名称',
+            align:'center', 
+            width:200, 
+            rule:'required'
+         },
+         {
+             name: 'pertype',
+             label: '资源类别',
+             align:'center', 
+             width:80,align:'center',
+             type:'select', 
+             items:datagrid_tree_type
+          },
+          {
+              name: 'url',
+              label: '资源地址',
+              align:'center', 
+              width:150,
+              hide:true
+          },
+          {
+             name: 'pertype',
+             label: '体系代码',
+             align:'center',
+             width:90,
+             hide:true
+          },
+          {
+             name: 'id',
+             label: '编号',
+             align:'center',
+             width:90,
+             hide:true
+          },
+          {
+              name: 'parentid',
+              label: '父级编号',
+              align:'center',
+              width:90,
+              hide:true
+         },
+         {
+             name: 'level',
+             label: '层级',
+             align:'center',
+             width:100,
+             items:datagrid_tree_level
+        },
+        {
+            name: 'order',
+            label: '排序',
+            align:'center', 
+            width:50
+         },
+         {
+           name: 'perCode',
+           label: '权限代码',
+           align:'center', 
+           width:120,
+           hide:true
+         },
+         {
+             name: 'status',
+             label: '状态',
+             align:'center', 
+             width:60, 
+             render:datagrid_tree_status
+         },
+         {
+             label: '操作',
+             render:tree_operation, 
+             align:'center',
+             width:60
+         },
+    ]
 })
 
 </script>
@@ -61,21 +139,21 @@ $('#permissionManagerListTree').datagrid({
 <body>
 <div class="bjui-pageContent">
     <table id="permissionManagerListTree" style="table-layout: fixed;" >
-        <thead>
+        <!-- <thead>
             <tr>
                 <th data-options="{name:'name', align:'center', width:200, rule:'required'}">资源名称</th>
                 <th data-options="{name:'pertype',width:80,align:'center', type:'select', items:datagrid_tree_type}">资源类别</th>
-                <th data-options="{name:'url', align:'center', width:150}">资源地址</th>
-                <th data-options="{name:'pertype', align:'center', width:90}">体系代码</th>
-                <th data-options="{name:'id', align:'center', width:90}">编号</th>
-                <th data-options="{name:'parentid', align:'center', width:90}">父级编号</th>
+                <th data-options="{name:'url', align:'center', width:150,hide:true}">资源地址</th>
+                <th data-options="{name:'pertype', align:'center', width:90,hide:true}">体系代码</th>
+                <th data-options="{name:'id', align:'center', width:90,hide:true}">编号</th>
+                <th data-options="{name:'parentid', align:'center', width:90,hide:true}">父级编号</th>
                 <th data-options="{name:'level', align:'center', width:100,items:datagrid_tree_level}">层级</th>
                 <th data-options="{name:'order', align:'center', width:50}">排序</th>
-                <th data-options="{name:'perCode', align:'center', width:120}">权限代码</th>
+                <th data-options="{name:'perCode', align:'center', width:120,hide:true}">权限代码</th>
                 <th data-options="{name:'status', align:'center', width:60, render:datagrid_tree_status}">状态</th>
             	<th data-options="{render:tree_operation, align:'center',width:60}">操作列</th>
             </tr>
-        </thead>
+        </thead> -->
     </table>
 </div>
 </body>

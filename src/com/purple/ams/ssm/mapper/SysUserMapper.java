@@ -114,6 +114,8 @@ public interface SysUserMapper {
 
 	List<SysDept> findDeptList()throws Exception;
 
+	List<SysDept> findAllDept()throws Exception;
+	
     int addDept(@Param(value="dept")SysDept dept)throws Exception;
 
     int editDept(@Param(value="dept")SysDept dept) throws Exception;
@@ -134,5 +136,11 @@ public interface SysUserMapper {
     List<SysUser> findDeptDutyByUserid(String userid)throws Exception;
 
     int deleteOldDeptByUserId(String userid)throws Exception;
+
+    int updateRoleStatus(@Param(value="roleid")String roleid,@Param(value="status") String status)throws Exception;
+
+    int deleteOldUserByDeptId(String deptid)throws Exception;
+
+    int finddeptStatusByRoleid(String roleid);
 	
 }

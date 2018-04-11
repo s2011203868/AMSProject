@@ -11,6 +11,6 @@
 <body>
 <iframe id="druidframe" marginwidth="0" marginheight="0" scrolling="auto"
   framespacing="0" vspace="0" hspace="0" frameborder="0" width="100%" height="100%" 
-  src="http://192.168.18.145:8080/AMSProject/druid/index.html">
+  src="http://${ipAddress }:8080/AMSProject/druid/index.html">
 </body><!--192.168.0.107  -->
 </html>

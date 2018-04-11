@@ -75,16 +75,15 @@ $('#rolelisttable').datagrid({
     filterThead:false,
     paging:{pageSize:50,selectPageSize:'70,100', showPagenum:5},
     linenumberAll: true,
+    showLinenumber:false,//是否显示行号
     inlineEditMult :false,
     tableWidth:'100%',
     contextMenuB:true,
     contextMenuB:false,
     showCheckboxcol:true,
     toolbarItem:'refresh',
-    toolbarCustom:'<button type="button" class="btn-orange" onclick="addNewDuty()" data-icon="plus-circle">新增岗位</button> <button type="button" onclick="editDuty()" class="btn-blue" data-icon="edit">编辑岗位</button> <button type="button" onclick="setingpermission()" class="btn-red" data-icon="cog">功能权限</button>',
+    toolbarCustom:'<button type="button" class="btn-orange" onclick="addNewDuty()" data-icon="plus-circle">新增岗位</button> <button type="button" onclick="editSelectedDuty()" class="btn-blue" data-icon="edit">编辑岗位</button> <button type="button" onclick="setingpermission()" class="btn-red" data-icon="cog">功能权限</button>',
     afterSave:function(){
-    	$('#roledistributelisttable').datagrid('refresh',true);
-    	$('#rolelisttable').datagrid('refresh',true);
     	$('#roleListTree').datagrid('refresh',true);
     }
 });
@@ -103,7 +102,7 @@ function addNewDuty(){
     });
 }
 
-function editDuty(){
+function editSelectedDuty(){
 	
 	if($("#rolelisttable").data('selectedDatas') == null){
         BJUI.alertmsg('info', '未选择一项！');
@@ -114,7 +113,7 @@ function editDuty(){
 	var rolename = $("#rolelisttable").data('selectedDatas')[0].rolename;
 	var status = $("#rolelisttable").data('selectedDatas')[0].status;
 	BJUI.dialog({
-        id:'editDutyid',
+        id:'editDutystatusid',
         width:'700',
         height:'500',
         mask:true,
@@ -123,7 +122,7 @@ function editDuty(){
         title:'编辑岗位',
         onClose:function(){
             $('#rolelisttable').datagrid('refresh',true);
-        }
+        } 
     });
 }
 
