@@ -26,7 +26,7 @@ $(function() {
     BJUI.init({
         JSPATH       : 'js/B-JUI.1.31/B-JUI/',         //[可选]框架路径
         PLUGINPATH   : 'js/B-JUI.1.31/B-JUI/plugins/', //[可选]插件路径
-        loginInfo    : {id:'login_timeout_dialog',url:'/AMSProject/login_timeout.html', title:'登陆', width:350, height:240}, // 会话超时后弹出登录对话框
+        loginInfo    : {id:'login_timeout_dialog',url:'/AMSProject/login_timeout.html',mask:false,width:350, height:240}, // 会话超时后弹出登录对话框
         statusCode   : {ok:200, error:300, timeout:301}, //[可选]js/B-JUI.1.31/login_timeout.html
         ajaxTimeout  : 300000, //[可选]全局Ajax请求超时时间(毫秒)
         alertTimeout : 3000,  //[可选]信息提示[info/correct]自动关闭延时(毫秒)

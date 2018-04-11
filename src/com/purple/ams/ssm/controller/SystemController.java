@@ -171,7 +171,6 @@ public class SystemController {
 	@RequestMapping("rolelistAddSave")
 	@ResponseBody
 	@Transactional(propagation=Propagation.REQUIRED)
-	//@RequiresPermissions("system:addrole")
 	public String rolelistAddSave(@RequestParam(value = "rolename") String rolename,
 			@RequestParam(value = "status") String status,@RequestParam(value="duty")String duty,
 			@RequestParam(value="permissions",defaultValue="")String permissions) throws Exception {
@@ -203,7 +202,6 @@ public class SystemController {
 	@RequestMapping("rolelisteditSave")
 	@ResponseBody
 	@Transactional(propagation=Propagation.REQUIRED)
-	//@RequiresPermissions("system:editrole")
 	public String rolelisteditSave(@RequestParam(value = "roleid") String roleid,
 			@RequestParam(value = "rolename") String rolename, @RequestParam(value = "status") String status) throws Exception {
 		
@@ -595,7 +593,7 @@ public class SystemController {
 	
 	@RequestMapping("systemexceptionrecordexport")
 	@ResponseBody
-	//@RequiresPermissions("system:exportexception")
+	@RequiresPermissions("system:exportexception")
 	public String systemExceptionRecordExport(HttpServletRequest request,HttpServletResponse response,
 			@RequestParam(value="pageCurrent")String pageCurrent,@RequestParam(value="pageSize")String pageSize) throws Exception{
 		
@@ -685,13 +683,17 @@ public class SystemController {
 	@RequestMapping("permissioneditsave")
 	@ResponseBody
 	@Transactional(propagation=Propagation.REQUIRED)
-	//@RequiresPermissions("system:editpermission")
+	@RequiresPermissions("system:editpermission")
 	public String permissioneditsave(SysPermission permission)throws Exception{
 		String id = permission.getId();
 		int status = permission.getStatus();
 		int n = sysUserService.permissionEidtSave(id,status);
 		//将资源状态修改完之后删除与此资源相关角色关联关系
-		int count = sysUserService.deleteRolePermission(id);
+		int count = 0;
+		if(status == 2){
+		    count = sysUserService.deleteRolePermission(id);
+		}
+		
 		
 		if (n > 0 && count >=0) {
 			return ExecuteResult.jsonReturn(ReturnJsonConstantCollection.RETURN_JSON_OKSTATUS, "修改成功!");
@@ -736,7 +738,6 @@ public class SystemController {
 	 */
 	@RequestMapping("findIsPermissionAuthorization")
 	@ResponseBody
-	//@RequiresPermissions("system:querypermissionbyrole")
 	public String findIsPermissionAuthorization(Model model,@RequestParam(value="roleid")String roleid) throws Exception{
 		
 		String json = sysUserService.findIsPermissionAuthorization(roleid);
@@ -771,7 +772,6 @@ public class SystemController {
 	@RequestMapping("addPermissionForRole")
 	@ResponseBody
 	@Transactional(propagation=Propagation.REQUIRED)
-	//@RequiresPermissions("system:addpermissionforrole")
 	public String addPermissionForRole(@RequestParam(value="roleid")String roleid,
 			@RequestParam(value="permissionid")String permissionid) throws Exception{
 		
@@ -846,7 +846,6 @@ public class SystemController {
 	@RequestMapping("removePermissionForRole")
 	@ResponseBody
 	@Transactional(propagation=Propagation.REQUIRED)
-	//@RequiresPermissions("system:removepermissionforrole")
 	public String removePermissionForRole(@RequestParam(value="roleid")String roleid,
 			@RequestParam(value="permissionid")String permissionid) throws Exception{
 	    int n = 0;
