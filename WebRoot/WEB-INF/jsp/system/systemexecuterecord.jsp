@@ -75,7 +75,7 @@ $('#systemexecuterecordtable').datagrid({
     //editMode: {dialog:{width:'550',height:'300',title:'角色信息',mask:true}},
    // editUrl: 'rolelistedit.action',/*../../html/datagrid/datagrid-edit.html?code={code}*/
    // delUrl:'UserServlet?method=del',
-    paging:{pageSize:10,selectPageSize:'20,30', showPagenum:5},
+    paging:{pageSize:100,selectPageSize:'200,300', showPagenum:5},
     linenumberAll: true,
     hScrollbar:false,
     tableWidth:'100%',

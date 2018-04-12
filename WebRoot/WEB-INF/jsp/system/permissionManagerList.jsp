@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>系统资源管理页</title>
+<title>系统功能资源管理页</title>
 <script type="text/javascript">
 // department
 function datagrid_tree_type() {
@@ -59,7 +59,7 @@ $('#permissionManagerListTree').datagrid({
             name: 'name',
             label: '资源名称',
             align:'center', 
-            width:200, 
+            width:280, 
             rule:'required'
          },
          {

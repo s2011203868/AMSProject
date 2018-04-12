@@ -30,6 +30,8 @@
 			<map>
 			     <!-- 同时登陆自动踢出过滤器 -->
 			    <entry key="kickout" value-ref="kickoutSessionControlFilter"/>
+			    <!--sessionTimeOut判断过滤器  -->
+			    <entry key="sessionTimeOut" value-ref="SessionExpiredFilter"/>
 				<!-- 将自定义 的FormAuthenticationFilter注入shiroFilter中 -->
 				<entry key="authc" value-ref="formAuthenticationFilter" />
 			</map>
@@ -54,7 +56,7 @@
 				/static/login/css/** = anon
 				/static/login/images/** = anon
 				/static/login/js/** = anon
-				/** = kickout,authc
+				/** = sessionTimeOut,kickout,authc
 			</value>
 		</property>
 	</bean>
@@ -107,8 +109,8 @@
 		<property name="sessionDAO" ref="sessionDAO"/>
 		
 		<property name="sessionIdCookie" ref="simpleCookie"/>
-		<!-- session的失效时长，单位毫秒 -->
-		<property name="globalSessionTimeout" value="3600000" />
+		<!-- session的失效时长30分钟，单位毫秒 -->
+		<property name="globalSessionTimeout" value="1800000" />
 		<!-- 删除失效的session -->
 		<property name="deleteInvalidSessions" value="true" />
 		
@@ -124,6 +126,9 @@
         <property name="maxSession" value="1"/>  
         <property name="kickoutUrl" value="/login.action"/>  
     </bean>
+    
+    
+    <bean id="SessionExpiredFilter" class="com.purple.ams.ssm.filter.SessionExpiredFilter"></bean>
 
 	<!-- 自定义form认证过虑器
 	基于Form表单的身份验证过滤器，不配置将也会注册此过虑器，表单中的用户账号、密码及loginurl将采用默认值，建议配置 -->

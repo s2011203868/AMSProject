@@ -62,30 +62,30 @@ function login(){
         	
         	 var json = eval(result);
         	 //alert(json.message)
-        	 if(json.message == '用户名不存在' || json.message == '密码错误'){
+        	 if(json.message == '用户名不存在'){
         		$("#login_ok").attr("disabled", false);
         		var notification = new NotificationFx({
-        			message : '<p style="text-align:center;display:block;font-size:18px;color:Fuchsia">用户名密码不正确或账号被禁用</p>',
+        			message : '<p style="text-align:center;display:block;font-size:18px;color:Fuchsia">用户名不存在</p>',
         			layout : 'bar',
         			effect : 'slidetop',
         			type : 'warning', 
         		});
 
         		notification.show();
-        	 }else if(json.message == '错误次数过多'){
+        	 }else if(json.message == '密码错误'){
         		 $("#login_ok").attr("disabled", false);
-        		 var notification = new NotificationFx({
-                     message : '<p style="text-align:center;display:block;font-size:18px;color:Fuchsia">错误次数过多，请5分钟后再试!</p>',
+                 var notification = new NotificationFx({
+                     message : '<p style="text-align:center;display:block;font-size:18px;color:Fuchsia">密码错误或账号被禁用</p>',
                      layout : 'bar',
                      effect : 'slidetop',
                      type : 'warning', 
                  });
 
                  notification.show();
-        	 }else if(json.message == '账号被禁用'){
+        	 }else if(json.message == '错误次数过多'){
         		 $("#login_ok").attr("disabled", false);
         		 var notification = new NotificationFx({
-                     message : '<p style="text-align:center;display:block;font-size:18px;color:Fuchsia">账号被禁用</p>',
+                     message : '<p style="text-align:center;display:block;font-size:18px;color:Fuchsia">错误次数过多，请5分钟后再试!</p>',
                      layout : 'bar',
                      effect : 'slidetop',
                      type : 'warning', 

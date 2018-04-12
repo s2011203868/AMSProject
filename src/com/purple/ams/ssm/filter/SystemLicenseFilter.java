@@ -25,7 +25,7 @@ import com.purple.ams.ssm.service.SysUserService;
  */
 public class SystemLicenseFilter implements Filter {
 
-	SysUserService sysUserService;
+	private SysUserService sysUserService;
 
 	@Override
 	public void destroy() {

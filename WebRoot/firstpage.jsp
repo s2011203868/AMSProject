@@ -22,6 +22,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 <script type="text/javascript">
 
 $(function() {
+	
 	$("#bjui-hnav-navbar").children().last().addClass("active");
     BJUI.init({
         JSPATH       : 'js/B-JUI.1.31/B-JUI/',         //[可选]框架路径
@@ -184,7 +185,7 @@ $(function() {
         }]
     });
     //---------------------------图表结束---------------------
-})
+});
 
 
 //菜单-事件-zTree
@@ -242,7 +243,7 @@ function bjui_index_exchange() {
                     <li><a href="${basePath}logout.action" style="font-weight:bold;">&nbsp;<i class="fa fa-power-off"></i> 退出</a></li>
                     
                     
-                    <li class="dropdown"><a href="#" class="dropdown-toggle bjui-fonts-tit" data-toggle="dropdown" title="更改字号"><i class="fa fa-font"></i> 大</a>
+                    <li class="dropdown"><a href="javascript:;" class="dropdown-toggle bjui-fonts-tit" data-toggle="dropdown" title="更改字号"><i class="fa fa-font"></i> 大</a>
                         <ul class="dropdown-menu" role="menu" id="bjui-fonts">
                             <li><a href="javascript:;" class="bjui-font-a" data-toggle="fonts"><i class="fa fa-font"></i> 特大</a></li>
                             <li><a href="javascript:;" class="bjui-font-b" data-toggle="fonts"><i class="fa fa-font"></i> 大</a></li>
@@ -250,7 +251,7 @@ function bjui_index_exchange() {
                             <li><a href="javascript:;" class="bjui-font-d" data-toggle="fonts"><i class="fa fa-font"></i> 小</a></li>
                         </ul>
                     </li>										
-                    <li class="dropdown active" ><a href="#" class="dropdown-toggle theme" data-toggle="dropdown" title="切换皮肤"><i class="fa fa-tree"></i>&nbsp</a>
+                    <li class="dropdown active" ><a href="javascript:;" class="dropdown-toggle theme" data-toggle="dropdown" title="切换皮肤"><i class="fa fa-tree"></i>&nbsp</a>
                         <ul class="dropdown-menu" role="menu" id="bjui-themes">
                             <li><a href="javascript:;" class="theme_purple" data-toggle="theme" data-theme="purple">&nbsp;<i class="fa fa-tree"></i> 紫罗兰</a></li>
                             <li><a href="javascript:;" class="theme_blue" data-toggle="theme" data-theme="blue">&nbsp;<i class="fa fa-tree"></i> 天空蓝</a></li>

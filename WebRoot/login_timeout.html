@@ -1,88 +1,12 @@
 <script type="text/javascript">
 $(function() {
-    /* document.onkeydown = function(e) {
-        e = e || window.event;
-        if(e.keyCode == 13) {
-            login();
-        }
-    };
-    
-  $('.close').hide(); */
-  
+
   $('.bjui-dialog').hide();
   $('.taskbarContent').hide();
   $('#bjui-taskbar').hide();
      setTimeout(function(){
       window.location.href = "/AMSProject/index.jsp";
-    },3000); 
+    },2000); 
 });
  
-/* function login(){
- $("#usernamecheck").html("");
-    $("#passwordcheck").html("");
-    var username = $("#j_username").val();
-    var password = $("#j_password").val();
-    if(username =='' || username ==null){
-        BJUI.alertmsg('warn', '用户名为空！', {
-            displayPosition:'middlecenter',
-        })
-        return
-    }
-    if(password =='' || password ==null){
-         BJUI.alertmsg('warn', '密码为空！', {
-             displayPosition:'middlecenter',
-            })
-        return
-    }
-    $("#login_ok").attr("disabled", true).html('登陆中..');
-    $.ajax({
-         type: "POST",
-         url: "login.action",
-         dataType: "json",
-         data: $('#login_form').serialize(),
-         success: function (result) {
-            
-             var json = eval(result);
-             //alert(json.message)
-             if(json.message == '用户名不存在' || json.message == '密码错误'){
-                $("#login_ok").attr("disabled", false).html('&nbsp;登&nbsp;录&nbsp;');
-                 BJUI.alertmsg('info', json.message, {
-                     displayPosition:'middlecenter',
-                    });
-             }else if(json.message == '错误次数过多'){
-            	 $("#login_ok").attr("disabled", false).html('&nbsp;登&nbsp;录&nbsp;');
-                 BJUI.alertmsg('info', '错误次数过多，请5分钟后再试!', {
-                     displayPosition:'middlecenter',
-                    });
-        	 }else if(json.message == 'gotofirst'){
-            	 BJUI.dialog('closeCurrent');
-             }
-         }
-    });
-}; */
 </script>
-<!-- <div class="main_box">
-        <form  id="login_form" action="#"  method="post"  >
-            <div class="login_msg text-center"><font color="red"></font></div>
-            <div class="form-group">
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon-user"><span class="glyphicon glyphicon-user"></span></span>
-                    <input type="text" class="form-control" id="j_username" name="username" value="" placeholder="登录账号" aria-describedby="sizing-addon-user">
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="input-group">
-                    <span class="input-group-addon" id="sizing-addon-password"><span class="glyphicon glyphicon-lock"></span></span>
-                    <input type="password" class="form-control" id="j_password" name="password" placeholder="登录密码" aria-describedby="sizing-addon-password">
-                </div>
-            </div>
-        <div class="text-center">
-            <input type="button" id="login_ok" onclick="login()" class="btn btn-primary btn-lg" value="&nbsp;登&nbsp;录&nbsp;">&nbsp;&nbsp;&nbsp;&nbsp;
-            <button type="reset" class="btn btn-default btn-lg">&nbsp;重&nbsp;置&nbsp;</button>
-        </div>
-        <div class="text-center">
-            <hr>
-            2014 - 2018 <a href="javascript:;">档案管理</a>
-        </div>
-    </form>
-</div> -->

@@ -18,6 +18,7 @@ public class ReturnJsonConstantCollection {
     public static final String RETURN_JSON_MESSAGE_UNAUTHORIZED = "您没有操作权限,请联系管理员";
     public static final String RETURN_JSON_MESSAGE_DISABLEDACCOUNT = "账号被禁用";
     public static final String RETURN_JSON_MESSAGE_UNKNOWNEXCEPTION = "未知错误，请联系管理员";
+    public static final String RETURN_JSON_MESSAGE_SESSIONtIMEOUT = "会话过期,请退出重新登陆";
     
     
 }
