@@ -32,7 +32,7 @@ function login(){
 	var password = $("#j_password").val();
 	if(username =='' || username ==null){
 		var notification = new NotificationFx({
-			message : '<p style="text-align:center;display:block;font-size:18px;color:Fuchsia">用户名不可为空</p>',
+			message : '<p style="text-align:center;display:block;font-size:18px;color:Fuchsia">用户名必填</p>',
 			layout : 'bar',
 			effect : 'slidetop',
 			type : 'warning', // notice, warning or error
@@ -43,7 +43,7 @@ function login(){
 	}
 	if(password =='' || password ==null){
 		var notification = new NotificationFx({
-			message : '<p style="text-align:center;display:block;font-size:18px;color:Fuchsia">密码不可为空</p>',
+			message : '<p style="text-align:center;display:block;font-size:18px;color:Fuchsia">密码必填</p>',
 			layout : 'bar',
 			effect : 'slidetop',
 			type : 'warning', 
